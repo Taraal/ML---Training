@@ -1,4 +1,9 @@
-import numpy as np 
+import numpy as np
+
+
+def squish_color(color_value):
+    return np.around(color_value /2.55, decimals=2) / 100
+
 
 class NeuralNetwork():
 
@@ -11,7 +16,7 @@ class NeuralNetwork():
         return 1 / (1 + np.exp(x))
 
     def sigmoid_derivative(self, x):
-        return x* (1 - x)
+        return x * (1 - x)
 
     def train(self, training_inputs, training_outputs, training_iterations):
 
@@ -27,7 +32,7 @@ class NeuralNetwork():
 
     def think(self, inputs):
 
-        inputs = inputs.astype(float)
+        inputs = squish_color(inputs.astype(float))
         output = self.sigmoid(np.dot(inputs, self.synaptic_weights))
 
         return output
@@ -41,17 +46,22 @@ if __name__ == '__main__':
     print(neural_network.synaptic_weights)
 
     training_inputs = np.array([[0,0,0],
-                            [1,1,1],
-                            [1,0,1],
-                            [0,1,1],
-                            [0,1,0],
-                            [1,1,0]])
-
-    training_outputs = np.array([[0,1,1,1,0,1]]).T
+                            [255,255,255],
+                            [255,255,255],
+                            [0, 0, 0],
+                            [255, 204, 153],
+                            [51, 51, 255],
+                            [0,255, 255],
+                            [102, 0, 102],
+                            ])
 
     np.random.seed(1)
 
-    neural_network.train(training_inputs, training_outputs, 10000)
+    #training_inputs = squish_color(training_inputs)
+
+    training_outputs = np.array([[0,1,1,0,0,1,0,1]]).T
+
+    neural_network.train(training_inputs, training_outputs, 50000)
 
     print("Synaptic weights after training : ")
     print(neural_network.synaptic_weights)
@@ -62,5 +72,5 @@ if __name__ == '__main__':
 
     print("New situation : input data = ", A, B, C)
     print("Output data : ")
-    print(round(neural_network.think(np.array([A, B, C]))[0]))
+    print(np.around(neural_network.think(np.array([A, B, C])), decimals=2))
 
